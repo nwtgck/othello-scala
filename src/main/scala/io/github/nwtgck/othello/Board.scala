@@ -21,28 +21,12 @@ case object Black extends Disk
 case object White extends Disk
 case object Empty extends Cell
 
-sealed class MoveResult
-case object Moved extends MoveResult
-case object NotMoved extends MoveResult
-
-// TODO: Change it to be immutable
-class Board {
-  type Position = (Int, Int)
-
-  /**
-    * Width and height of board
-    */
-  val Size = 8
-
-  // Set initial board
-  private[this] val inner: Array[Array[Cell]] =
-    Array.fill(Size)(Array.fill(Size)(Empty))
-
-  // Set initial position
-  inner(3)(3) = White
-  inner(3)(4) = Black
-  inner(4)(3) = Black
-  inner(4)(4) = White
+/**
+  * Othello Board (Immutable)
+  * @param inner
+  */
+case class Board private (inner: Map[Board.Position, Cell]) {
+  import Board.{Position, Size}
 
   override def toString: String = {
     val aToH = "  A B C D E F G H\n"
@@ -55,8 +39,8 @@ class Board {
     }
 
     aToH  +
-    inner.zipWithIndex.map { case (row, i) =>
-      s"${i+1} ${row.map(cellToString).mkString(" ")} ${i+1}"
+    (0 until Size).map{h =>
+      s"${h} ${(0 until Size).map{w => cellToString(inner((h, w)))}.mkString(" ")} ${h}"
     }.mkString("\n") + "\n" +
     aToH
   }
@@ -67,7 +51,7 @@ class Board {
     import scala.util.control.Breaks
 
     var (h: Int, w: Int) = pos
-    if(inner(h)(w) == Empty) {
+    if(inner(pos) == Empty) {
       var count = -1
       val b = new Breaks
       b.breakable{
@@ -78,12 +62,12 @@ class Board {
           if(!(0 <= h && h < 8 && 0 <= w && w < 8)) {
             return 0
           }
-          if(inner(h)(w) != disk.reversed) {
+          if(inner((h, w)) != disk.reversed) {
             b.break
           }
         }
       }
-      if(count >= 1 && inner(h)(w) == disk) {
+      if(count >= 1 && inner((h,w)) == disk) {
         count
       } else {
         0
@@ -110,13 +94,15 @@ class Board {
     flipCount(pos, disk, 1, 1) > 0
 
   /**
-    * Move a disk
+    * Board after moving a disk
     * @param disk
     * @param pos
     * @return
     */
-  def move(disk: Disk, pos: Position): MoveResult = {
+  // TODO: Make it declarative but it doesn't have side-effects
+  def moved(disk: Disk, pos: Position): Board = {
     if(canMove(disk, pos)) {
+      var newInner: Map[Position, Cell] = inner
       for {
         dir0 <- -1 to 1
         dir1 <- -1 to 1
@@ -127,17 +113,13 @@ class Board {
         while(fCount > 0) {
           newH += dir0
           newW += dir1
-          // TODO: Mutation
-          inner(newH)(newW) = disk
+          newInner = newInner.updated((newH,newW), disk)
           fCount -= 1
         }
       }
-      val (h, w) = pos
-      // TODO: Mutation
-      inner(h)(w) = disk
-      Moved
+      Board(newInner.updated(pos, disk))
     } else {
-      NotMoved
+      this
     }
   }
 
@@ -152,4 +134,26 @@ class Board {
       w <- 0 until Size
       if this.canMove(disk, (h, w))
     } yield (h, w)
+}
+
+
+object Board {
+  type Position = (Int, Int)
+
+  /**
+    * Width and height of board
+    */
+  val Size = 8
+
+  /**
+    * Initial board
+    */
+  val initial: Board =
+    Board(Map.empty.withDefault{
+      case (3, 3) => White
+      case (3, 4) => Black
+      case (4, 3) => Black
+      case (4, 4) => White
+      case _      => Empty
+    })
 }
