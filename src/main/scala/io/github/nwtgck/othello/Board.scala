@@ -27,7 +27,7 @@ case class Position(i: Int, j: Int)
   * Othello Board (Immutable)
   * @param inner
   */
-case class Board private (inner: Map[Position, Cell]) {
+case class Board private (private val inner: Map[Position, Cell]) {
   import Board.Size
 
   override def toString: String = {
@@ -137,6 +137,16 @@ case class Board private (inner: Map[Position, Cell]) {
       pos = Position(i, j)
       if this.canMove(disk, pos)
     } yield pos
+
+  def countCell(cell: Cell): Int =
+    (for {
+      i <- 0 until Size
+      j <- 0 until Size
+      if inner(Position(i, j)) == cell
+    } yield ()).length
+
+  lazy val blackCount: Int = countCell(Black)
+  lazy val whiteCount: Int = countCell(White)
 }
 
 
