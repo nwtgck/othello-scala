@@ -6,6 +6,12 @@ import io.github.nwtgck.othello.player.Player
   * Othello game (mutable)
   */
 class Game(player1: Player[Black.type], player2: Player[White.type]) {
+
+  private def positionToMoveStr(pos: Position): String = {
+    val Position(i, j) = pos
+    s"${(j + 'a'.toInt).toChar}${i+1}"
+  }
+
   def start(): Unit = {
     // Set initial board
     var board: Board = Board.initial
@@ -44,7 +50,7 @@ class Game(player1: Player[Black.type], player2: Player[White.type]) {
         board = board.moved(currPlayer.disk, pos)
 
         // Print move
-        println(s"${currPlayer.disk} moved!")
+        println(s"${currPlayer.disk} moved at ${positionToMoveStr(pos)}!")
 
         // Switch the player
         switchPlayer()

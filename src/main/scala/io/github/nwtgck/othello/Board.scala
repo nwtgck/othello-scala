@@ -31,7 +31,7 @@ case class Board private (private val inner: Map[Position, Cell]) {
   import Board.Size
 
   override def toString: String = {
-    val aToH = "  A B C D E F G H\n"
+    val aToH = "  a b c d e f g h\n"
 
     // Conversion function of Cell to Stirng
     val cellToString: Cell => String = {
