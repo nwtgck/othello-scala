@@ -40,7 +40,7 @@ case class Board private (inner: Map[Board.Position, Cell]) {
 
     aToH  +
     (0 until Size).map{h =>
-      s"${h} ${(0 until Size).map{w => cellToString(inner((h, w)))}.mkString(" ")} ${h}"
+      s"${h+1} ${(0 until Size).map{w => cellToString(inner((h, w)))}.mkString(" ")} ${h+1}"
     }.mkString("\n") + "\n" +
     aToH
   }
