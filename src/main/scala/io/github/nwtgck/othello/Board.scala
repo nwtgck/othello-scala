@@ -21,12 +21,14 @@ case object Black extends Disk
 case object White extends Disk
 case object Empty extends Cell
 
+case class Position(i: Int, j: Int)
+
 /**
   * Othello Board (Immutable)
   * @param inner
   */
-case class Board private (inner: Map[Board.Position, Cell]) {
-  import Board.{Position, Size}
+case class Board private (inner: Map[Position, Cell]) {
+  import Board.Size
 
   override def toString: String = {
     val aToH = "  A B C D E F G H\n"
@@ -39,35 +41,35 @@ case class Board private (inner: Map[Board.Position, Cell]) {
     }
 
     aToH  +
-    (0 until Size).map{h =>
-      s"${h+1} ${(0 until Size).map{w => cellToString(inner((h, w)))}.mkString(" ")} ${h+1}"
+    (0 until Size).map{i =>
+      s"${i+1} ${(0 until Size).map{j => cellToString(inner(Position(i, j)))}.mkString(" ")} ${i+1}"
     }.mkString("\n") + "\n" +
     aToH
   }
 
 
   // TODO: Make it declarative but it doesn't have side-effects
-  private[this] def flipCount(pos: Position, disk: Disk, hAdd: Int, wAdd: Int): Int = {
+  private[this] def flipCount(pos: Position, disk: Disk, iAdd: Int, jAdd: Int): Int = {
     import scala.util.control.Breaks
 
-    var (h: Int, w: Int) = pos
+    var Position(i, j) = pos
     if(inner(pos) == Empty) {
       var count = -1
       val b = new Breaks
       b.breakable{
         while(true) {
           count += 1
-          h += hAdd
-          w += wAdd
-          if(!(0 <= h && h < 8 && 0 <= w && w < 8)) {
+          i += iAdd
+          j += jAdd
+          if(!(0 <= i && i < 8 && 0 <= j && j < 8)) {
             return 0
           }
-          if(inner((h, w)) != disk.reversed) {
+          if(inner(Position(i, j)) != disk.reversed) {
             b.break
           }
         }
       }
-      if(count >= 1 && inner((h,w)) == disk) {
+      if(count >= 1 && inner(Position(i,j)) == disk) {
         count
       } else {
         0
@@ -109,11 +111,11 @@ case class Board private (inner: Map[Board.Position, Cell]) {
         if !(dir0 == 0 && dir1 == 0)
       } {
         var fCount = flipCount(pos, disk, dir0, dir1)
-        var (newH, newW) = pos
+        var Position(newI, newJ) = pos
         while(fCount > 0) {
-          newH += dir0
-          newW += dir1
-          newInner = newInner.updated((newH,newW), disk)
+          newI += dir0
+          newJ += dir1
+          newInner = newInner.updated(Position(newI,newJ), disk)
           fCount -= 1
         }
       }
@@ -130,15 +132,15 @@ case class Board private (inner: Map[Board.Position, Cell]) {
     */
   def movablePositions(disk: Disk): Seq[Position] =
     for {
-      h <- 0 until Size
-      w <- 0 until Size
-      if this.canMove(disk, (h, w))
-    } yield (h, w)
+      i <- 0 until Size
+      j <- 0 until Size
+      pos = Position(i, j)
+      if this.canMove(disk, pos)
+    } yield pos
 }
 
 
 object Board {
-  type Position = (Int, Int)
 
   /**
     * Width and height of board
@@ -150,10 +152,10 @@ object Board {
     */
   val initial: Board =
     Board(Map.empty.withDefault{
-      case (3, 3) => White
-      case (3, 4) => Black
-      case (4, 3) => Black
-      case (4, 4) => White
-      case _      => Empty
+      case Position(3, 3) => White
+      case Position(3, 4) => Black
+      case Position(4, 3) => Black
+      case Position(4, 4) => White
+      case _              => Empty
     })
 }

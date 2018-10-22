@@ -24,6 +24,8 @@ class Game(player1: Player[Black.type], player2: Player[White.type]) {
       val movablePoss = board.movablePositions(currPlayer.disk)
       // If the player should pass
       if(movablePoss.isEmpty) {
+        // Print pass
+        println(s"${currPlayer.disk} pass!")
         // Increment pass count
         passCount += 1
         // Switch the player
@@ -32,7 +34,7 @@ class Game(player1: Player[Black.type], player2: Player[White.type]) {
         // Reset continuous pass count
         passCount = 0
         // Decide the position to move until the position is movable
-        val pos: Board.Position = Iterator.continually(
+        val pos: Position = Iterator.continually(
           currPlayer.move(board)
         ).find(pos =>
           board.canMove(currPlayer.disk, pos)
@@ -40,6 +42,9 @@ class Game(player1: Player[Black.type], player2: Player[White.type]) {
 
         // Update the board to moved board
         board = board.moved(currPlayer.disk, pos)
+
+        // Print move
+        println(s"${currPlayer.disk} moved!")
 
         // Switch the player
         switchPlayer()

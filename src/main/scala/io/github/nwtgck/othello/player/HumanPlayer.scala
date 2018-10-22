@@ -1,17 +1,17 @@
 package io.github.nwtgck.othello.player
-import io.github.nwtgck.othello.{Board, Disk}
+import io.github.nwtgck.othello.{Board, Disk, Position}
 
 import scala.io.StdIn
 
 case class HumanPlayer[D <: Disk](override val disk: D) extends Player[D](disk){
 
-  private def moveStrToPostion(moveStr: String): Option[Board.Position] = {
+  private def moveStrToPostion(moveStr: String): Option[Position] = {
     moveStr.toList match {
       case List(alphaChar, numChar) =>
-        val h = numChar.toInt - '1'.toInt
-        val w = Character.toLowerCase(alphaChar).toInt - 'a'
-        if(0 <= h && h < Board.Size && 0 <= w && w < Board.Size) {
-          Some((h, w))
+        val i = numChar.toInt - '1'.toInt
+        val j = Character.toLowerCase(alphaChar).toInt - 'a'
+        if(0 <= i && i < Board.Size && 0 <= j && j < Board.Size) {
+          Some(Position(i, j))
         } else {
           None
         }
@@ -20,7 +20,7 @@ case class HumanPlayer[D <: Disk](override val disk: D) extends Player[D](disk){
     }
   }
 
-  override def move(board: Board): (Int, Int) = {
+  override def move(board: Board): Position = {
     Iterator.continually(
       moveStrToPostion(StdIn.readLine(s"${disk} Pos (e.g. d3)> "))
     ).find{posOpt =>
