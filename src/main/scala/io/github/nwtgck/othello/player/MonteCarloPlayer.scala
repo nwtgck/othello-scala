@@ -1,6 +1,6 @@
 package io.github.nwtgck.othello.player
 
-import io.github.nwtgck.othello.{Board, Disk, Position}
+import io.github.nwtgck.othello.{Board, Disk, Position, Utils}
 
 import scala.util.Random
 
@@ -53,11 +53,27 @@ case class MonteCarloPlayer[D <: Disk](override val disk: D, randomSeed: Long, n
   override def move(board: Board): Position = {
     val random = new Random(randomSeed)
     val movablePoss = board.movablePositions(disk)
-    movablePoss.maxBy(pos =>
-      (1 to nTrials)
-        .map(_ => random.nextLong)
-        .par
-        .map(seed => evaluate(board.moved(disk, pos), seed)).sum
+    val posAndScores: Seq[(Position, Int)] = movablePoss.map(pos =>
+      (
+        pos,
+        (1 to nTrials)
+          .map(_ => random.nextLong)
+          .par
+          .map(seed => evaluate(board.moved(disk, pos), seed))
+          .sum
+      )
     )
+
+    // Print position and its score
+    println(
+      posAndScores
+        .sortBy{case (_, score) => -score}
+        .map{case (pos, score) =>
+          s"${Utils.positionToMoveStr(pos)}: ${score}"
+        }
+        .mkString(", ")
+    )
+
+    posAndScores.maxBy{case (_, score) => score}._1
   }
 }
