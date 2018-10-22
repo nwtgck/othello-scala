@@ -27,7 +27,7 @@ case class Position(i: Int, j: Int)
   * Othello Board (Immutable)
   * @param inner
   */
-case class Board private (private val inner: Map[Position, Cell]) {
+case class Board private (private val inner: Map[Position, Cell]) extends (Position => Cell) {
   import Board.Size
 
   override def toString: String = {
@@ -47,6 +47,12 @@ case class Board private (private val inner: Map[Position, Cell]) {
     aToH
   }
 
+  /**
+    * Get cell at the specified position
+    * @param pos
+    * @return
+    */
+  def apply(pos: Position): Cell = inner(pos)
 
   // TODO: Make it declarative but it doesn't have side-effects
   private[this] def flipCount(pos: Position, disk: Disk, iAdd: Int, jAdd: Int): Int = {

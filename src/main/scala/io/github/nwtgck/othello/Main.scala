@@ -1,6 +1,6 @@
 package io.github.nwtgck.othello
 
-import io.github.nwtgck.othello.player.{HumanPlayer, Player, RandomPlayer, MonteCarloPlayer}
+import io.github.nwtgck.othello.player._
 
 import scala.io.StdIn
 import scala.util.Try
@@ -28,11 +28,12 @@ object Main {
       Seq(
         () => HumanPlayer(disk),
         () => RandomPlayer(disk, selectRandomSeed()),
-        () => MonteCarloPlayer(disk, selectRandomSeed(), selectNTrials())
+        () => MonteCarloPlayer(disk, selectRandomSeed(), selectNTrials()),
+        () => UguisuEvaluationTablePlayer(disk)
       )
 
     val playerIdx: Int = Iterator.continually(
-      Try(StdIn.readLine("0: human, 1: random, 2: Monte Carlo> ").toInt).toOption
+      Try(StdIn.readLine("0: human, 1: random, 2: Monte Carlo, 3: Uguisu table> ").toInt).toOption
     ).find { idxOpt =>
       idxOpt.isDefined && delayedPlayers.isDefinedAt(idxOpt.get)
     }.head.get // NOTE: Logically safe .head.get because not empty sequence and defined
