@@ -15,13 +15,20 @@ object Main {
       seedOpt.isDefined
     }.head.get // NOTE: Logically safe .head.get because not empty sequence and defined
 
+  private def selectNTrials(): Int =
+    Iterator.continually(
+      Try(StdIn.readLine("# of trials> ").toInt).toOption
+    ).find { seedOpt =>
+      seedOpt.isDefined
+    }.head.get // NOTE: Logically safe .head.get because not empty sequence and defined
+
   private def selectPlayer[D <: Disk](disk: D): Player[D] = {
     // Candidate players
     val delayedPlayers: Seq[() => Player[D]] =
       Seq(
         () => HumanPlayer(disk),
         () => RandomPlayer(disk, selectRandomSeed()),
-        () => MonteCarloPlayer(disk, selectRandomSeed())
+        () => MonteCarloPlayer(disk, selectRandomSeed(), selectNTrials())
       )
 
     val playerIdx: Int = Iterator.continually(

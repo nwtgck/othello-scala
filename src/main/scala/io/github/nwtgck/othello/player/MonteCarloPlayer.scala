@@ -4,7 +4,7 @@ import io.github.nwtgck.othello.{Board, Disk, Position}
 
 import scala.util.Random
 
-case class MonteCarloPlayer[D <: Disk](override val disk: D, randomSeed: Long) extends Player[D](disk) {
+case class MonteCarloPlayer[D <: Disk](override val disk: D, randomSeed: Long, nTrials: Int) extends Player[D](disk) {
   private[this] def evaluate(_board: Board, seed: Long): Int = {
     val player1 = RandomPlayer(disk.reversed, seed)
     val player2 = RandomPlayer(disk, seed)
@@ -51,7 +51,6 @@ case class MonteCarloPlayer[D <: Disk](override val disk: D, randomSeed: Long) e
   }
 
   override def move(board: Board): Position = {
-    val nTrials = 100
     val random = new Random(randomSeed)
     val movablePoss = board.movablePositions(disk)
     movablePoss.maxBy(pos =>
