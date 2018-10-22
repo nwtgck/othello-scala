@@ -8,21 +8,17 @@ import scala.util.{Random, Try}
 object Main {
 
 
-  private def selectRandomSeed[D <: Disk](disk: D): RandomPlayer[D] = {
-    val randomSeed: Long = Iterator.continually(
+  private def selectRandomSeed(): Long =
+    Iterator.continually(
       Try(StdIn.readLine("seed> ").toLong).toOption
     ).find { seedOpt =>
       seedOpt.isDefined
     }.head.get // NOTE: Logically safe .head.get because not empty sequence and defined
 
-    RandomPlayer(disk, new Random(randomSeed))
-  }
-
-
   private def selectPlayer[D <: Disk](disk: D): Player[D] = {
     // Candidate players
     val delayedPlayers: Seq[() => Player[D]] =
-      Seq(() => HumanPlayer(disk), () => selectRandomSeed(disk))
+      Seq(() => HumanPlayer(disk), () => RandomPlayer(disk, selectRandomSeed()))
 
     val playerIdx: Int = Iterator.continually(
       Try(StdIn.readLine("0: human, 1: random> ").toInt).toOption
