@@ -5,13 +5,9 @@ import io.github.nwtgck.othello.{Board, Disk, Position}
 import scala.util.Random
 
 case class MonteCarloPlayer[D <: Disk](override val disk: D, randomSeed: Long) extends Player[D](disk) {
-
-  val random = new Random(randomSeed)
-
-  private[this] def evaluate(_board: Board): Int = {
-
-    val player1 = RandomPlayer(disk.reversed, random.nextLong)
-    val player2 = RandomPlayer(disk, random.nextLong)
+  private[this] def evaluate(_board: Board, seed: Long): Int = {
+    val player1 = RandomPlayer(disk.reversed, seed)
+    val player2 = RandomPlayer(disk, seed)
     var board = _board
 
     // Continuous pass count
@@ -56,9 +52,13 @@ case class MonteCarloPlayer[D <: Disk](override val disk: D, randomSeed: Long) e
 
   override def move(board: Board): Position = {
     val nTrials = 100
+    val random = new Random(randomSeed)
     val movablePoss = board.movablePositions(disk)
-    movablePoss.par.maxBy(pos =>
-      (1 to nTrials).map(_ => evaluate(board.moved(disk, pos))).sum.toFloat / nTrials
+    movablePoss.maxBy(pos =>
+      (1 to nTrials)
+        .map(_ => random.nextLong)
+        .par
+        .map(seed => evaluate(board.moved(disk, pos), seed)).sum.toFloat / nTrials
     )
   }
 }
