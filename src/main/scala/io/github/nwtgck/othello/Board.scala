@@ -117,20 +117,19 @@ class Board {
     */
   def move(disk: Disk, pos: Position): MoveResult = {
     if(canMove(disk, pos)) {
-      // TODO: Use one `for`
-      for(dir0 <- -1 to 1) {
-        for(dir1 <- -1 to 1) {
-          if(!(dir0 == 0 && dir1 == 0)) {
-            var fCount = flipCount(pos, disk, dir0, dir1)
-            var (newH, newW) = pos
-            while(fCount > 0) {
-              newH += dir0
-              newW += dir1
-              // TODO: Mutation
-              inner(newH)(newW) = disk
-              fCount -= 1
-            }
-          }
+      for {
+        dir0 <- -1 to 1
+        dir1 <- -1 to 1
+        if !(dir0 == 0 && dir1 == 0)
+      } {
+        var fCount = flipCount(pos, disk, dir0, dir1)
+        var (newH, newW) = pos
+        while(fCount > 0) {
+          newH += dir0
+          newW += dir1
+          // TODO: Mutation
+          inner(newH)(newW) = disk
+          fCount -= 1
         }
       }
       val (h, w) = pos
