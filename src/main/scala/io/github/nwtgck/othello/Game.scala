@@ -9,7 +9,7 @@ class Game(player1: Player[Black.type], player2: Player[White.type]) {
   def start(): Unit = {
     // Set initial board
     var board: Board = Board.initial
-    // Pass count
+    // Continuous pass count
     var passCount: Int = 0
     // Current player
     var currPlayer: Player[Disk] = player1
@@ -29,6 +29,8 @@ class Game(player1: Player[Black.type], player2: Player[White.type]) {
         // Switch the player
         switchPlayer()
       } else {
+        // Reset continuous pass count
+        passCount = 0
         // Decide the position to move until the position is movable
         val pos: Board.Position = Iterator.continually(
           currPlayer.move(board)
