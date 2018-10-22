@@ -51,5 +51,7 @@ class Game(player1: Player[Black.type], player2: Player[White.type]) {
       }
     }
 
+    // Print result
+    println(s"Black: ${board.blackCount}, White: ${board.whiteCount}")
   }
 }
