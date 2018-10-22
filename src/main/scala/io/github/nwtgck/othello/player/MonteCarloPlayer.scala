@@ -57,7 +57,7 @@ case class MonteCarloPlayer[D <: Disk](override val disk: D, randomSeed: Long, n
       (1 to nTrials)
         .map(_ => random.nextLong)
         .par
-        .map(seed => evaluate(board.moved(disk, pos), seed)).sum.toFloat / nTrials
+        .map(seed => evaluate(board.moved(disk, pos), seed)).sum
     )
   }
 }
