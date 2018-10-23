@@ -14,22 +14,40 @@ case class MinimaxPlayer[D <: Disk](override val disk: D, depthLimit: Int) exten
           board = board.moved(disk, pos),
           disk = disk.reversed,
           previousMoveOpt = Some(Move.At(pos))
-        ))
+        )),
+        _alpha = Int.MinValue,
+        _beta  = Int.MaxValue
       )
     }
   }
 
+  private def minimax(depthLimit: Int, gameTree: GameTree, _alpha: Int, _beta: Int): Int = {
+    val isMyTurn: Boolean = gameTree.value.disk == disk
 
-  private def minimax(depthLimit: Int, gameTree: GameTree): Int = {
     if(depthLimit == 0 || gameTree.children.isEmpty) {
-      evaluateGamePosition(gameTree.value) * (if(gameTree.value.disk == disk) 1 else -1)
+      evaluateGamePosition(gameTree.value) * (if(isMyTurn) 1 else -1)
     } else {
+      var alpha = _alpha
+      var beta  = _beta
+
       val evaluatedValues: Seq[Int] = for {
         childTree <- gameTree.children
       } yield {
-        minimax(depthLimit - 1, childTree)
+        val score = minimax(depthLimit - 1, childTree, alpha, beta)
+        if(isMyTurn) {
+          if(score >= beta) {
+            return score
+          }
+          alpha = Math.max(alpha, score)
+        } else {
+          if(score <= alpha) {
+            return score
+          }
+          beta = Math.min(beta, score)
+        }
+        score
       }
-      if(gameTree.value.disk == disk) {
+      if(isMyTurn) {
         evaluatedValues.max
       } else {
         evaluatedValues.min
