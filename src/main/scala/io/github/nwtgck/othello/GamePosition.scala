@@ -1,12 +1,21 @@
 package io.github.nwtgck.othello
 
 /**
+  * Move or pass
+  */
+sealed trait Move
+object Move {
+  case object Pass extends Move
+  case class At(position: Position) extends Move
+}
+
+/**
   * Position of othello game
   * @param board Board
   * @param disk current disk
-  * @param passedInPrevious has been passed before game position
+  * @param previousMoveOpt Previous move (None: initial game should not have previous move)
   */
-case class GamePosition(board: Board, disk: Disk, passedInPrevious: Boolean) {
+case class GamePosition(board: Board, disk: Disk, previousMoveOpt: Option[Move]) {
   /**
     * Movable positions of current game position
     */
