@@ -7,6 +7,27 @@ import scala.util.Try
 
 object Main {
 
+  private def selectDepthLimit(): Int =
+    Iterator.continually(
+      Try(StdIn.readLine("depth limit> ").toInt).toOption
+    ).find { seedOpt =>
+      seedOpt.isDefined
+    }.head.get // NOTE: Logically safe .head.get because not empty sequence and defined
+
+  private def selectBoardEvaluator(): (Board, Disk) => Int = {
+    // Candidate players
+    val evaluators = Seq(
+      BoardEvaluators.uguisi _
+    )
+
+    val idx = Iterator.continually(
+      Try(StdIn.readLine("0: uguisu evaluator> ").toInt).toOption
+    ).find { idxOpt =>
+      idxOpt.isDefined && evaluators.isDefinedAt(idxOpt.get)
+    }.head.get // NOTE: Logically safe .head.get because not empty sequence and defined
+
+    evaluators(idx)
+  }
 
   private def selectRandomSeed(): Long =
     Iterator.continually(
@@ -29,11 +50,12 @@ object Main {
         () => HumanPlayer(disk),
         () => RandomPlayer(disk, selectRandomSeed()),
         () => MonteCarloPlayer(disk, selectRandomSeed(), selectNTrials()),
-        () => UguisuEvaluationTablePlayer(disk)
+        () => UguisuEvaluationTablePlayer(disk),
+        () => MinimaxPlayer(disk, selectDepthLimit(), selectBoardEvaluator())
       )
 
     val playerIdx: Int = Iterator.continually(
-      Try(StdIn.readLine("0: human, 1: random, 2: Monte Carlo, 3: Uguisu table> ").toInt).toOption
+      Try(StdIn.readLine("0: human, 1: random, 2: Monte Carlo, 3: Uguisu table, 4: minimax> ").toInt).toOption
     ).find { idxOpt =>
       idxOpt.isDefined && delayedPlayers.isDefinedAt(idxOpt.get)
     }.head.get // NOTE: Logically safe .head.get because not empty sequence and defined
