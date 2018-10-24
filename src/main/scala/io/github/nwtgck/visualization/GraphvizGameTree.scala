@@ -12,7 +12,7 @@ object GraphvizGameTree {
     } else {
       val gamePosition = gameTree.value
       Queue[String](
-        s""""${nodeId}" [label=${Utils.escapedString(gamePosition.board.toString)}]"""
+        s""""${nodeId}" [label=<${boardToHtmlTable(gamePosition.board)}>]"""
       ) ++
       linesAfterNodeDef ++
       Queue(gameTree.children.zipWithIndex: _*).flatMap{ case (childTree, i) =>
@@ -30,6 +30,25 @@ object GraphvizGameTree {
         )
       }
     }
+  }
+
+  // Create HTML table string
+  private def boardToHtmlTable(board: Board): String = {
+    "<table border='1' color='#404040' cellspacing='0'>" +
+    (for(i <- 0 until Board.Size) yield {
+      "<tr>" +
+      (for(j <- 0 until Board.Size) yield {
+        val cell = board(Position(i, j))
+        val bgColor = cell match {
+          case Empty => "#00b33c"
+          case Black => "black"
+          case White => "white"
+        }
+        s"<td bgcolor='${bgColor}'></td>"
+      }).mkString +
+      "</tr>"
+    }).mkString +
+    "</table>"
   }
 
   /**
