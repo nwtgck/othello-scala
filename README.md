@@ -69,3 +69,20 @@ abstract class Player[+D <: Disk] (val disk: D) {
 }
 ```
 
+## Game Tree
+
+Game tree is represented as **lazy** tree. So you can get **entire game tree** by the following.
+
+```scala
+// The entire game tree of Othello!
+GameTree.create(GamePosition(
+  board = Board.initial,
+  disk  = Black,
+  previousMoveOpt = None
+))
+```
+
+Here is a visualization of the game tree where depth limit = 3.
+
+![Othello Game Tree Visualization](demo_images/game-tree-depth-limit3.svg)
+
