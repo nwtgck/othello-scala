@@ -16,6 +16,7 @@ This game has three types of AI for now.
 * `RandomPlayer` - moves randomly
 * `MonteCarloPlayer` - moves by  Monte Carlo method
 * `UguisuEvaluationTablePlayer` - moves by a evalutation table found in <http://uguisu.skr.jp/othello/5-1.html>
+* `MinimaxPlayer` - moves by minimax method with alpha-beta pruning
 
 ## Type-safety
 
