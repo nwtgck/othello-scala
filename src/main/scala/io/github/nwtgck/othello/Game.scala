@@ -14,7 +14,7 @@ class Game(player1: Player[Black.type], player2: Player[White.type]) {
     * @param logPrintStream
     * @return final board
     */
-  def start(logPrintStream: PrintStream=System.out): Board = {
+  def start(logPrintStream: PrintStream): Board = {
     // Set initial board
     var board: Board = Board.initial
     // Continuous pass count

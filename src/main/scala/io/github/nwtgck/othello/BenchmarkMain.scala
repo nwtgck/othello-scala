@@ -20,7 +20,7 @@ object BenchmarkMain {
 
     simpleBenchmark("") {
       // Start the game
-      new Game(player1, player2).start()
+      new Game(player1, player2).start(System.out)
     }
   }
 }

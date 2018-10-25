@@ -14,10 +14,24 @@ object Main {
     var player1 = selectDelayedPlayer("Player1", Black)()
     var player2 = selectDelayedPlayer("Player2", White)()
 
-    // Start the game and get final result
-    val finalBoard = new Game(player1, player2).start(logPrintStream = new PrintStream((b: Int) => ()))
+    // The number of games
+    val nGames = selectNGames("")
 
-    println(s"Black: ${finalBoard.blackCount}, White: ${finalBoard.whiteCount}")
+    if(nGames == 1) {
+      new Game(player1, player2).start(logPrintStream = System.out)
+    } else {
+      val finalBoards = for(n <- 1 to nGames) yield {
+        // Start the game and get final result
+        val finalBoard = new Game(player1, player2).start(logPrintStream = new PrintStream((b: Int) => ()))
+        println(s"#${n} Black: ${finalBoard.blackCount}, White: ${finalBoard.whiteCount}")
+        finalBoard
+      }
+
+      val blackWinningRate = finalBoards.count(b => b.blackCount > b.whiteCount).toFloat / nGames
+      val whiteWinningRate = finalBoards.count(b => b.whiteCount > b.blackCount).toFloat / nGames
+      val drawRate         = finalBoards.count(b => b.blackCount == b.whiteCount).toFloat / nGames
+      println(s"Black winning rate: ${blackWinningRate}, White winning rate: ${whiteWinningRate}, draw rate: ${drawRate}")
+    }
   }
 
   private def selectValue[T](prefix: String, converter: String => T): T = {
@@ -38,6 +52,9 @@ object Main {
 
     itemAndCandidates(num -1)._2
   }
+
+  private def selectNGames(prefix: String): Int =
+    selectValue[Int](s"${prefix}/# of games", _.toInt)
 
   private def selectDepthLimit(prefix: String): Int =
     selectValue[Int](s"${prefix}/depth limit", _.toInt)
