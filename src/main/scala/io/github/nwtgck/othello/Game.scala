@@ -1,5 +1,7 @@
 package io.github.nwtgck.othello
 
+import java.io.PrintStream
+
 import io.github.nwtgck.othello.player.Player
 
 /**
@@ -7,7 +9,12 @@ import io.github.nwtgck.othello.player.Player
   */
 class Game(player1: Player[Black.type], player2: Player[White.type]) {
 
-  def start(): Unit = {
+  /**
+    * Start game
+    * @param logPrintStream
+    * @return final board
+    */
+  def start(logPrintStream: PrintStream): Board = {
     // Set initial board
     var board: Board = Board.initial
     // Continuous pass count
@@ -21,12 +28,12 @@ class Game(player1: Player[Black.type], player2: Player[White.type]) {
 
     while(passCount != 2) {
       // Print current board
-      println(board)
+      logPrintStream.println(board)
       val movablePoss = board.movablePositions(currPlayer.disk)
       // If the player should pass
       if(movablePoss.isEmpty) {
         // Print pass
-        println(s"${currPlayer.disk} pass!")
+        logPrintStream.println(s"${currPlayer.disk} pass!")
         // Increment pass count
         passCount += 1
         // Switch the player
@@ -45,7 +52,7 @@ class Game(player1: Player[Black.type], player2: Player[White.type]) {
         board = board.moved(currPlayer.disk, pos)
 
         // Print move
-        println(s"${currPlayer.disk} moved at ${Utils.positionToMoveStr(pos)}!")
+        logPrintStream.println(s"${currPlayer.disk} moved at ${Utils.positionToMoveStr(pos)}!")
 
         // Switch the player
         switchPlayer()
@@ -53,6 +60,9 @@ class Game(player1: Player[Black.type], player2: Player[White.type]) {
     }
 
     // Print result
-    println(s"Black: ${board.blackCount}, White: ${board.whiteCount}")
+    logPrintStream.println(s"Black: ${board.blackCount}, White: ${board.whiteCount}")
+
+    // Return final board
+    board
   }
 }
