@@ -25,7 +25,7 @@ case class MinimaxPlayer[D <: Disk](override val disk: D, depthLimit: Int, board
     val isMyTurn: Boolean = gameTree.value.disk == disk
 
     if(depthLimit == 0 || gameTree.children.isEmpty) {
-      boardEvaluator(gameTree.value.board, gameTree.value.disk) * (if(isMyTurn) 1 else -1)
+      boardEvaluator(gameTree.value.board, disk)
     } else {
       var alpha = _alpha
       var beta  = _beta
