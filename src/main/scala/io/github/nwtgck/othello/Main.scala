@@ -1,5 +1,7 @@
 package io.github.nwtgck.othello
 
+import java.io.PrintStream
+
 import io.github.nwtgck.othello.player._
 
 import scala.io.StdIn
@@ -12,8 +14,10 @@ object Main {
     var player1 = selectDelayedPlayer("Player1", Black)()
     var player2 = selectDelayedPlayer("Player2", White)()
 
-    // Start the game
-    new Game(player1, player2).start()
+    // Start the game and get final result
+    val finalBoard = new Game(player1, player2).start(logPrintStream = new PrintStream((b: Int) => ()))
+
+    println(s"Black: ${finalBoard.blackCount}, White: ${finalBoard.whiteCount}")
   }
 
   private def selectValue[T](prefix: String, converter: String => T): T = {

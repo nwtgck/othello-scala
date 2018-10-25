@@ -4,6 +4,6 @@ import io.github.nwtgck.visualization.GraphvizGameTree
 
 object GraphvizGameTreeMain {
   def main(args: Array[String]): Unit = {
-    println(GraphvizGameTree.dotTreeString(depthLimit = 3, Board.initial, Black))
+    println(GraphvizGameTree.dotTreeString(depthLimit = 8, Board.initial, Black))
   }
 }
