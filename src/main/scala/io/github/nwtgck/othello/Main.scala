@@ -76,6 +76,7 @@ object Main {
       ("random", () => RandomPlayer(disk, selectRandomSeed(s"${prefix}/random"))),
       ("Monte Carlo", () => MonteCarloPlayer(disk, selectRandomSeed(s"${prefix}/Monte Carlo"), selectNTrials(s"${prefix}/Monte Carlo"))),
       ("Uguisu table", () => UguisuEvaluationTablePlayer(disk)),
-      ("minimax", () => MinimaxPlayer(disk, selectDepthLimit(s"${prefix}/minimax"), selectBoardEvaluator(s"${prefix}/minimax")))
+      ("minimax", () => MinimaxPlayer(disk, selectDepthLimit(s"${prefix}/minimax"), selectBoardEvaluator(s"${prefix}/minimax"))),
+      ("final-search", () => FinalSearchPlayer(disk, selectDelayedPlayer(s"${prefix}/final-search", disk)()))
     ))
 }
