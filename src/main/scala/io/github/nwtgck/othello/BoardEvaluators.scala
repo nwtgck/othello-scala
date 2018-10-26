@@ -57,4 +57,12 @@ object BoardEvaluators {
     val yourCount = board.countCell(disk.reversed)
     myCount - yourCount
   }
+
+
+  /**
+    * Difference between the number of movable positions
+    */
+  val movablePosDiff: EvaluationFunction = (board: Board, disk: Disk) => {
+    board.movablePositions(disk).size - board.movablePositions(disk.reversed).size
+  }
 }

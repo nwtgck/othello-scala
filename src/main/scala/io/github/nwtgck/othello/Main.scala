@@ -61,7 +61,10 @@ object Main {
 
   private def selectBoardEvaluator(prefix: String): (Board, Disk) => Int =
     selectList(s"${prefix}/board evaluators", Seq(
-      ("uguisu", BoardEvaluators.uguisi)
+      ("uguisu", BoardEvaluators.uguisi),
+      ("disk-diff", BoardEvaluators.diskDiff),
+      ("disk-ternary-diff", BoardEvaluators.diskTernaryDiff),
+      ("movable-pos-diff", BoardEvaluators.movablePosDiff),
     ))
 
   private def selectRandomSeed(prefix: String): Long =
