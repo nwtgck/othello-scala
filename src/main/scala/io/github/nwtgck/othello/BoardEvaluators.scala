@@ -1,6 +1,8 @@
 package io.github.nwtgck.othello
 
 object BoardEvaluators {
+  type EvaluationFunction = (Board, Disk) => Int
+
   def uguisi(board: Board, disk: Disk): Int = {
     // TODO: Duplicate code
     // (from: http://uguisu.skr.jp/othello/5-1.html)
@@ -34,5 +36,25 @@ object BoardEvaluators {
         case _      => -1
       })
     }).sum
+  }
+
+  /**
+    * Ternary (=-1, 0, +1) difference between the number of my cell and your cell
+    */
+  val diskTernaryDiff: EvaluationFunction = (board: Board, disk: Disk) => {
+    val myCount = board.countCell(disk)
+    val yourCount = board.countCell(disk.reversed)
+    if (myCount == yourCount) 0
+    else if (myCount > yourCount) 1
+    else -1
+  }
+
+  /**
+    * Difference between the number of my cell and your cell
+    */
+  val diskDiff: EvaluationFunction = (board: Board, disk: Disk) => {
+    val myCount   = board.countCell(disk)
+    val yourCount = board.countCell(disk.reversed)
+    myCount - yourCount
   }
 }
